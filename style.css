@@ -25,22 +25,16 @@ h3 {
     color: white;
 }
 
+.uv-style {
+    border-radius: .25em;
+    height: 2 em;
+    width: 10px;
+}
+
 #input-flavor {
     margin-left: 10px;
-    /* border-radius: .25rem; */
-    /* width:100%; */
 }
 
 #button-search {
-    /* background-color: #bada55; */
-    /* margin-left: 2px; */
     border: none;
-}
-
-#uvWrapper {
-    background-color: #bada55;
-}
-
-#p-UV {
-    display: inline;
 }
