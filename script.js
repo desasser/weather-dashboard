@@ -89,23 +89,31 @@
                 url: queryURLOneCall,
                 method: "GET"
             }).then(function(responseToo){
-                console.log(responseToo)
-
-                //TODO: City Name
-                $("#other-space").append(thisSearch);
-                console.log(thisSearch);
-                //TODO: Date
-                $("#other-space").append(now);
-                console.log(now);
-                //TODO: Icon for weather conditions (font-awesome or weatherapi?)
+                //declare variables for 
                 var icon = responseToo.current.weather[0].icon;
                 var iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`
                 $("#other-space").append(iconURL);
+                var temp = responseToo.current.temp;
+                var humidity = responseToo.current.humidity;
+                var windSpd = responseToo.current.wind_speed;
+                var windDir = responseToo.current.wind_deg;
+                var uvInd = responseToo.current.uvi;
+
+                $("#p-temp").text(temp);
+                $("#p-humid").text(humidity);
+                $("#p-wind-speed").text(windSpd);
+                $("#uv-score").text(windSpd);
+
+                console.log(responseToo);
+                console.log(thisSearch);
+                console.log(now);
                 console.log(icon);
-                //TODO: Temp
-                //TODO: Humidity
-                //TODO: Wind speed
-                //TODO: UV Index
+                console.log('temp', temp);
+                console.log('humidity', humidity);
+                console.log('wind speed', windSpd);
+                //TODO: convert wind direction into North, South, East, West
+                console.log('wind direction', windDir);
+                console.log('uv index', uvInd);
                                 
             })
 

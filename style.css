@@ -36,3 +36,11 @@ h3 {
     /* margin-left: 2px; */
     border: none;
 }
+
+#uvWrapper {
+    background-color: #bada55;
+}
+
+#p-UV {
+    display: inline;
+}
