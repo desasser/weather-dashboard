@@ -1,0 +1,38 @@
+header {
+    background-color: #333333;
+    /* height: 20px; */
+    color: #f7f7f7;
+    padding: 10px;
+    text-align: center;
+    margin: 0;
+}
+
+h3 {
+    margin-left: 10px;
+}
+
+.searchHistory {
+    background-color: #dbdbdb;
+    height: 100vh
+    
+}
+
+.otherSpace {
+    background-color: #f7f7f7;
+}
+
+.icon-flavor {
+    color: white;
+}
+
+#input-flavor {
+    margin-left: 10px;
+    /* border-radius: .25rem; */
+    /* width:100%; */
+}
+
+#button-search {
+    /* background-color: #bada55; */
+    /* margin-left: 2px; */
+    border: none;
+}
