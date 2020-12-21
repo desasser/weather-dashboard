@@ -1,3 +1,8 @@
+/* is this a hack? */
+body {
+    overflow-x: hidden;
+}
+
 header {
     background-color: #333333;
     /* height: 20px; */
@@ -11,10 +16,30 @@ h3 {
     margin-left: 10px;
 }
 
+h5 {
+    padding-top: 5px;
+}
+
 .searchHistory {
     background-color: #dbdbdb;
     height: 100vh
     
+}
+
+.margin-killer {
+    margin: 0;
+}
+
+.future-forecast {
+    justify-content: space-around;
+}
+
+.future-flavor {
+    background-color: #333333;
+    height: 250px;
+    width:100%;
+    color: white;
+    border-radius: .25em;
 }
 
 .otherSpace {
@@ -27,8 +52,9 @@ h3 {
 
 .uv-style {
     border-radius: .25em;
-    height: 2 em;
-    width: 10px;
+    height: 5%;
+    width: 10%;
+    display: inline;
 }
 
 #input-flavor {

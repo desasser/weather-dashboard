@@ -40,19 +40,20 @@ $("#button-search").on("click", function (event) {
         return;
     }
 
+    $(".future-forecast").empty();
+
     //save input text and convert to first letter capitalized
     thisSearch = $("#input-flavor").val();
     thisSearch = thisSearch.toLowerCase();
 
-    //snippet found from stack exchange
+    //snippet found from stackexchange
     thisSearch = thisSearch.charAt(0).toUpperCase() + thisSearch.slice(1);
 
-
-    //append to page in .list-group
+    //prepends the latest search to the search history as a list item
     var liEl = $("<li>");
     $(liEl).text(thisSearch)
     $(liEl).addClass("list-group-item")
-    $(".list-group").append(liEl);
+    $(".list-group").prepend(liEl);
 
     //TODO: Bring thas back
     //push latest search into array
@@ -90,7 +91,7 @@ $("#button-search").on("click", function (event) {
             url: queryURLOneCall,
             method: "GET"
         }).then(function (responseToo) {
-            //declare variables for 
+            //declare variables for current data
             var icon = responseToo.current.weather[0].icon;
             var iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`
             var temp = responseToo.current.temp;
@@ -109,24 +110,76 @@ $("#button-search").on("click", function (event) {
             //TODO: convert wind direction into North, South, East, West
 
             //Set up style for UV index and change the background color of the container based on value
-            //TODO: Don't want it to be a button
+            //TODO: The background won't adjust its size
             var uvIndSpan = $("<span>");
+            var uvDiv = $("<div>");
             uvIndSpan.text(uvInd);
-            uvIndSpan.addClass('uv-style');
-            $("#uv-score").text("UV Index: ")
+            uvDiv.addClass('uv-style');
+            $("#uv-score").text("UV Index: ");
             if (uvInd > 6) {
-                uvIndSpan.css("background-color", "FF4848")
+                uvDiv.css("background-color", "FF4848")
             } else if (3 < uvInd >= 6) {
-                uvIndSpan.css("background-color", "#FFFF66")
+                uvDiv.css("background-color", "#FFFF66")
             } else {
-                uvIndSpan.css("background-color", "#ADFF2F")
+                uvDiv.css("background-color", "#ADFF2F")
             }
-            $("#uv-score").append(uvIndSpan);
+            uvDiv.append(uvIndSpan);
+            $("#uv-score").append(uvDiv);
+            console.log(responseToo);
+            for (i = 0; i < 5; i++) {
+                futureWeather(i, responseToo);
+            };
         })
 
     })
 
 })
+
+function futureWeather(day, responseToo) {
+    //declare vars for future data
+    var futureIcon = responseToo.daily[day].weather[0].icon;
+    var futureIconURL = `http://openweathermap.org/img/wn/${futureIcon}@2x.png`;
+    var futureTempMax = responseToo.daily[day].temp.max;
+    var futureTempMin = responseToo.daily[day].temp.min;
+    var futureHumidity = responseToo.daily[day].humidity;
+    var futureIconImage = $("<img>");
+    futureIconImage.attr('src', futureIconURL)
+
+    //declare var for tomorrow's date
+    var tomorrow = moment().add(day,'days').format('MM/DD/YY');
+    console.log(tomorrow);
+
+    //declare var for adding the cards for future weather info
+    var futureDiv = $("<div>");
+    futureDiv.addClass('future-flavor col-md-2');
+    
+    //set the date to the future cards
+    var futureDate = $("<h5>");
+    futureDate.text(tomorrow);
+
+    //put the date on the card
+    futureDiv.append(futureDate);
+
+    //put the icon on the card
+    futureDiv.append(futureIconImage);
+
+    //put max and min temp on the card
+    var tempBlockHigh = $("<p>")
+    tempBlockHigh.text(`High: ${futureTempMax}`);
+    futureDiv.append(tempBlockHigh);
+
+    var tempBlockLow = $("<p>")
+    tempBlockLow.text(`Low: ${futureTempMin}`);
+    futureDiv.append(tempBlockLow);
+
+    //put humidity on the card
+    var humidityBlock = $("<p>");
+    humidityBlock.text(`Humidity: ${futureHumidity}%`);
+    futureDiv.append(humidityBlock);
+
+    //put the card on the correct place on the page
+    $(".future-forecast").append(futureDiv);
+}
 
     //When opening site, should display last searched city forecast
     //TODO: Clear results button

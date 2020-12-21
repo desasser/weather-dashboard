@@ -19,7 +19,7 @@
 <body>
 
     <!-- Header -->
-    <header>
+    <header class="margin-killer">
         <h1>Weather Dashboard</h1>
     </header>
 
@@ -49,7 +49,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card mt-2">
-                        <div class="card-body">
+                        <div class="card-body margin-killer">
                           <h4 id="city-name">Happy holidays! Santa has been spotted flying his reindeer in test patterns above northern portions of Canada and Europe, hopefully he maintains proper social distancing guidelines as he visits every home in the world on one night!</h4>
                           <p id="p-temp"></p>
                           <p id="p-humid"></p>
@@ -63,29 +63,15 @@
                       </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row ml-3 mt-2">
                 <h4>5-Day Forecast: </h4>
             </div>
-            <div class="row">
-                <div class="col-md-2" id="forecast-disp1">
-                    test
-                </div>
-                <div class="col-md-2" id="forecast-disp2">
-                    test
-                </div>
-                <div class="col-md-2" id="forecast-disp3">
-                    test
-                </div>
-                <div class="col-md-2" id="forecast-disp4">
-                    test
-                </div>
-                <div class="col-md-2" id="forecast-disp5">
-                    test
-                </div>
+            <div class="row future-forecast margin-killer">
+
             </div>
         </div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="script.js"></script>
