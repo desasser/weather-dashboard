@@ -6,24 +6,24 @@ var now = moment().format('dddd, MM/DD/YY');
 
 var storedCities = JSON.parse(localStorage.getItem("saved-cities")) || [];
 
+var currentCity = '';
+
 //do not show the clear button on page load if there is no previous search history
 clearBtn();
 
 //populate the search history column
 for (var i = 0; i < storedCities.length; i++) {
     var liEl = $("<li>");
-    $(liEl).text(storedCities[i])
+    var buttonEl = $("<button>");
+
+    $(buttonEl).text(storedCities[i])
     $(liEl).addClass("list-group-item")
+    $(liEl).append(buttonEl);
     $(".list-group").prepend(liEl);
 }
 
 //TODO: Bonus Stuff
-//How do I get this to work on both the button and the input at the same time?
-//Option 1 - make guts a function and call the function with two .on commands
-//Option 2 - direct everything within the form to the same thing if XX happens
-//Option 3 - Write the same code twice with two trigger commands
-//If I use a form, the button ends up on the second line
-//$("form").on("submit", function(event)
+//Set keypress - key 13 (enter) to do the same thing as click
 //How to set dark/light mode?
 //I'd like to have the card background dark with white text at night
 //and light with dark text during the day (based on if statement)
@@ -58,7 +58,7 @@ $("#button-search").on("click", function () {
         $(liElToo).text(thisSearch)
         $(liElToo).addClass("list-group-item")
         $(".list-group").prepend(liElToo);
-        
+
         storedCities.push(thisSearch);
         localStorage.setItem("saved-cities", JSON.stringify(storedCities));
     }
@@ -69,9 +69,12 @@ $("#button-search").on("click", function () {
     //clear input field
     $("#input-flavor").val('')
 
-    //call function below here
-    currentWeather(thisSearch);
+    //call function below here and accept the response.name return from the function
+    currentCity = currentWeather(thisSearch);
+
+    console.log(currentCity);
 });
+
 
 $(".list-group").on("click", "li", function () {
     var whichCity = $(this).text();
@@ -88,6 +91,9 @@ function currentWeather(city) {
     //TODO: Add toggle for city search, city and state search, city, state, and country search
     var queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=677d25f5725630dee0d3fb96edd1516f`
 
+    //declare variable cityName to store name data from API response
+    var cityName = '';
+
     //ajax call utilizing current weather API to extract lat/long data
     //save lat/long into var coords
     //feed coords into One Call to get current/future forecast
@@ -95,10 +101,12 @@ function currentWeather(city) {
         url: queryURLCityCall,
         method: "GET"
     }).then(function (response) {
-
+        cityName = response.name;
+        console.log(cityName);
         var lat = response.coord.lat;
         var long = response.coord.lon;
 
+        //query url for the one call open weather api
         var queryURLOneCall = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=miutely,hourly,alerts&units=imperial&appid=677d25f5725630dee0d3fb96edd1516f`;
 
         //ajax call taking coords from previous call and feeding them into the onecall functionality of the weather API to extract all necessary data
@@ -112,8 +120,8 @@ function currentWeather(city) {
             var temp = responseToo.current.temp;
             var humidity = responseToo.current.humidity;
             var windSpd = responseToo.current.wind_speed;
-            var windDir = responseToo.current.wind_deg;
-            var uvInd = responseToo.current.uvi;
+            //TODO: var windDir = responseToo.current.wind_deg;
+            var uvInd = responseToo.daily[0].uvi;
             var iconImage = $("<img>");
             iconImage.attr('src', iconURL)
 
@@ -141,8 +149,9 @@ function currentWeather(city) {
                 futureWeather(i, responseToo);
             };
         })
-
+        return cityName;
     })
+    
 
 }
 
@@ -158,7 +167,6 @@ function futureWeather(day, responseToo) {
 
     //declare var for tomorrow's date
     var tomorrow = moment().add(day, 'days').format('MM/DD/YY');
-    // console.log(tomorrow);
 
     //declare var for adding the cards for future weather info
     var futureDiv = $("<div>");
@@ -191,29 +199,29 @@ function futureWeather(day, responseToo) {
     //put the card on the correct place on the page
     $(".future-forecast").append(futureDiv);
 }
-    
-    //create clear button to wipe out search history
-    var buttonEl = $("<button>");
-    //TODO: cant get this stupid button to shift right
-    $(buttonEl).addClass("btn btn-info d-flex align-items-end clearMe");
-    $(buttonEl).text("Clear");
-    $(".clear-button").append(buttonEl);
 
-    //Checks to see if the clear button should be hidden or visible
-    function clearBtn() {
-        if (storedCities.length == 0) {
-            $(".clear-button").css('visibility','hidden');
-        } else {
-            $(".clear-button").css('visibility','visible');
-        }
+//create clear button to wipe out search history
+var buttonEl = $("<button>");
+//TODO: cant get this stupid button to shift right
+$(buttonEl).addClass("btn btn-info d-flex align-items-end clearMe");
+$(buttonEl).text("Clear");
+$(".clear-button").append(buttonEl);
+
+//Checks to see if the clear button should be hidden or visible
+function clearBtn() {
+    if (storedCities.length == 0) {
+        $(".clear-button").css('visibility', 'hidden');
+    } else {
+        $(".clear-button").css('visibility', 'visible');
     }
+}
 
-    $(".clearMe").on("click", function () {
-        localStorage.clear();
-        $(".list-group").empty();
-        storedCities = [];
+$(".clearMe").on("click", function () {
+    localStorage.clear();
+    $(".list-group").empty();
+    storedCities = [];
 
-        //Once the clear button is clicked, this button should be hidden
-        clearBtn();
-    });
+    //Once the clear button is clicked, this button should be hidden
+    clearBtn();
+});
 
