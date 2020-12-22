@@ -50,6 +50,10 @@ h5 {
     color: white;
 }
 
+.clear-button {
+    display: flex;
+}
+
 .uv-style {
     border-radius: .25em;
     height: 5%;
@@ -63,4 +67,9 @@ h5 {
 
 #button-search {
     border: none;
+}
+
+#uvWrapper {
+    width: 60px;
+    border-radius: 0.25em;
 }

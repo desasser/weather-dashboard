@@ -1,21 +1,19 @@
-//TODO: Fetch current and future conditions for city
-
-//TODO: Future weather results should present
-//TODO: Five day forecast with
-//TODO: Date
-//TODO: Icon for weather (FA/weather api)
-//TODO: Temp
-//TODO: Humidity
-
 //declare variables for button click/submit event
 var thisSearch = '';
-//TODO: Bring this back
-// var searchHistArr = JSON.parse(localStorage.getItem("history")) || [];
 var liEl = $("<li>");
-
 var currentTime = moment().format('HH');
 var now = moment().format('dddd, MM/DD/YY');
 
+var storedCities = JSON.parse(localStorage.getItem("saved-cities")) || [];
+
+
+//populate the search history column
+for (var i = 0; i < storedCities.length; i++) {
+    var liEl = $("<li>");
+    $(liEl).text(storedCities[i])
+    $(liEl).addClass("list-group-item")
+    $(".list-group").prepend(liEl);
+}
 
 //TODO: Bonus Stuff
 //How do I get this to work on both the button and the input at the same time?
@@ -31,9 +29,9 @@ var now = moment().format('dddd, MM/DD/YY');
 //Toggle functionality to hide and expand search history
 //Air Pollution with color scale
 //Add a doppler from the area you are searching
-$("#button-search").on("click", function (event) {
+$("#button-search").on("click", function () {
     //prevent refresh on submit
-    event.preventDefault();
+    // event.preventDefault();
 
     //if input is blank, return without doing anything
     if ($("#input-flavor").val() === '') {
@@ -43,31 +41,47 @@ $("#button-search").on("click", function (event) {
     $(".future-forecast").empty();
 
     //save input text and convert to first letter capitalized
+    //city
     thisSearch = $("#input-flavor").val();
     thisSearch = thisSearch.toLowerCase();
 
-    //snippet found from stackexchange
+    //snippet found from stack overflow
+    //TODO: reference name stored in response instead
+    //TODO: use return from function
     thisSearch = thisSearch.charAt(0).toUpperCase() + thisSearch.slice(1);
 
-    //prepends the latest search to the search history as a list item
-    var liEl = $("<li>");
-    $(liEl).text(thisSearch)
-    $(liEl).addClass("list-group-item")
-    $(".list-group").prepend(liEl);
-
-    //TODO: Bring thas back
-    //push latest search into array
-    // searchHistArr.push(thisSearch);
-    // console.log(searchHistArr);
-    //TODO: Bring thas back
-    // localStorage.setItem("history", JSON.stringify(searchHistArr));
+    if (!storedCities.includes(thisSearch)) {
+        //prepends the latest search to the search history as a list item
+        var liElToo = $("<li>");
+        $(liElToo).text(thisSearch)
+        $(liElToo).addClass("list-group-item")
+        $(".list-group").prepend(liElToo);
+        
+        storedCities.push(thisSearch);
+        localStorage.setItem("saved-cities", JSON.stringify(storedCities));
+    }
 
     //clear input field
     $("#input-flavor").val('')
 
+    //call function below here
+    currentWeather(thisSearch);
+});
+
+$(".list-group").on("click", "li", function () {
+    var whichCity = $(this).text();
+
+    //clear future cards
+    $(".future-forecast").empty();
+
+    //call weather function
+    currentWeather(whichCity);
+});
+
+function currentWeather(city) {
     //call weather API to pull up weather info from openweather API
-    //TODO: Can add back in alerts if needed
-    var queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${thisSearch}&appid=677d25f5725630dee0d3fb96edd1516f`
+    //TODO: Add toggle for city search, city and state search, city, state, and country search
+    var queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=677d25f5725630dee0d3fb96edd1516f`
     // console.log(queryURLCityCall);
 
     //ajax call utilizing current weather API to extract lat/long data
@@ -77,7 +91,7 @@ $("#button-search").on("click", function (event) {
         url: queryURLCityCall,
         method: "GET"
     }).then(function (response) {
-        // console.log(response);
+        console.log(response);
 
         var lat = response.coord.lat;
         var long = response.coord.lon;
@@ -102,7 +116,7 @@ $("#button-search").on("click", function (event) {
             var iconImage = $("<img>");
             iconImage.attr('src', iconURL)
 
-            $("#city-name").text(thisSearch + ' -- ' + now)
+            $("#city-name").text(city + ' -- ' + now)
             $("#city-name").append(iconImage);
             $("#p-temp").text(`Temperature: ${temp} \u00b0F`);
             $("#p-humid").text(`Humidity: ${humidity}% humidity`);
@@ -110,22 +124,18 @@ $("#button-search").on("click", function (event) {
             //TODO: convert wind direction into North, South, East, West
 
             //Set up style for UV index and change the background color of the container based on value
-            //TODO: The background won't adjust its size
-            var uvIndSpan = $("<span>");
-            var uvDiv = $("<div>");
-            uvIndSpan.text(uvInd);
-            uvDiv.addClass('uv-style');
-            $("#uv-score").text("UV Index: ");
+            //TODO: change this from a button
+            //TODO: call is maybe not accurate?
+            $("#p-UV").html(`UV Index: <button id="uvWrapper">${uvInd}</button>`);
             if (uvInd > 6) {
-                uvDiv.css("background-color", "FF4848")
+                $("#uvWrapper").css("background-color", "FF4848")
             } else if (3 < uvInd >= 6) {
-                uvDiv.css("background-color", "#FFFF66")
+                $("#uvWrapper").css("background-color", "#FFFF66")
             } else {
-                uvDiv.css("background-color", "#ADFF2F")
+                $("#uvWrapper").css("background-color", "#ADFF2F")
             }
-            uvDiv.append(uvIndSpan);
-            $("#uv-score").append(uvDiv);
-            console.log(responseToo);
+
+            //generate future weather cards
             for (i = 0; i < 5; i++) {
                 futureWeather(i, responseToo);
             };
@@ -133,7 +143,7 @@ $("#button-search").on("click", function (event) {
 
     })
 
-})
+}
 
 function futureWeather(day, responseToo) {
     //declare vars for future data
@@ -146,13 +156,13 @@ function futureWeather(day, responseToo) {
     futureIconImage.attr('src', futureIconURL)
 
     //declare var for tomorrow's date
-    var tomorrow = moment().add(day,'days').format('MM/DD/YY');
+    var tomorrow = moment().add(day, 'days').format('MM/DD/YY');
     console.log(tomorrow);
 
     //declare var for adding the cards for future weather info
     var futureDiv = $("<div>");
     futureDiv.addClass('future-flavor col-md-2');
-    
+
     //set the date to the future cards
     var futureDate = $("<h5>");
     futureDate.text(tomorrow);
@@ -180,27 +190,23 @@ function futureWeather(day, responseToo) {
     //put the card on the correct place on the page
     $(".future-forecast").append(futureDiv);
 }
+    
+    //create clear button to wipe out search history
+    var buttonEl = $("<button>");
+    //TODO: cant get this stupid button to shift right
+    $(buttonEl).addClass("btn btn-info d-flex align-items-end clearMe");
+    $(buttonEl).text("Clear");
+    $(".clear-button").append(buttonEl);
+    console.log(storedCities);
 
-    //When opening site, should display last searched city forecast
-    //TODO: Clear results button
-    // remove the clear button when the button is clicked again
-    // $(".clear-button-wrapper").empty();
-    // var buttonEl = $("<button>");
-    // $(buttonEl).addClass("btn btn-info");;
-    // $(buttonEl).text("Clear");
-    // $(".search-history").append(buttonEl);
+    //I want it visible when there is content in the array and empty when the array is empty
+    //This needs to check on page load, when the search is clicked, and when the clear button is clicked
+    if (storedCities.length == 0) {
+        $(".clear-button").css('visibility','hidden');
+    }
 
-        //On refresh/load get previous searches from local storage
-        //Display them onto page in .search-history
-        //TODO: Bring thas back
-        // for (var i = 0; i < searchHistArr.length; i++) {
-        //     var liElToo = $("<li>");
-        //     $(liElToo).text(searchHistArr[i]);
-        //     $(liElToo).addClass("list-group-item")
-        //     $(".list-group").append(liElToo);
-        // }
-
-//TODO: Add click functionality to search history to view conditions again
-
-
+    $(".clearMe").on("click", function () {
+        localStorage.clear();
+        $(".list-group").empty();
+    });
 
