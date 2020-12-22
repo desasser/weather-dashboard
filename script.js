@@ -6,6 +6,8 @@ var now = moment().format('dddd, MM/DD/YY');
 
 var storedCities = JSON.parse(localStorage.getItem("saved-cities")) || [];
 
+//do not show the clear button on page load if there is no previous search history
+clearBtn();
 
 //populate the search history column
 for (var i = 0; i < storedCities.length; i++) {
@@ -61,6 +63,9 @@ $("#button-search").on("click", function () {
         localStorage.setItem("saved-cities", JSON.stringify(storedCities));
     }
 
+    //check to see if a city was added to the search history, if yes show the button, if no button remains hidden
+    clearBtn();
+
     //clear input field
     $("#input-flavor").val('')
 
@@ -82,7 +87,6 @@ function currentWeather(city) {
     //call weather API to pull up weather info from openweather API
     //TODO: Add toggle for city search, city and state search, city, state, and country search
     var queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=677d25f5725630dee0d3fb96edd1516f`
-    // console.log(queryURLCityCall);
 
     //ajax call utilizing current weather API to extract lat/long data
     //save lat/long into var coords
@@ -91,14 +95,11 @@ function currentWeather(city) {
         url: queryURLCityCall,
         method: "GET"
     }).then(function (response) {
-        console.log(response);
 
         var lat = response.coord.lat;
         var long = response.coord.lon;
-        // console.log(lat,long);
 
         var queryURLOneCall = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=miutely,hourly,alerts&units=imperial&appid=677d25f5725630dee0d3fb96edd1516f`;
-        // console.log(queryURLOneCall);
 
         //ajax call taking coords from previous call and feeding them into the onecall functionality of the weather API to extract all necessary data
         $.ajax({
@@ -157,7 +158,7 @@ function futureWeather(day, responseToo) {
 
     //declare var for tomorrow's date
     var tomorrow = moment().add(day, 'days').format('MM/DD/YY');
-    console.log(tomorrow);
+    // console.log(tomorrow);
 
     //declare var for adding the cards for future weather info
     var futureDiv = $("<div>");
@@ -197,16 +198,22 @@ function futureWeather(day, responseToo) {
     $(buttonEl).addClass("btn btn-info d-flex align-items-end clearMe");
     $(buttonEl).text("Clear");
     $(".clear-button").append(buttonEl);
-    console.log(storedCities);
 
-    //I want it visible when there is content in the array and empty when the array is empty
-    //This needs to check on page load, when the search is clicked, and when the clear button is clicked
-    if (storedCities.length == 0) {
-        $(".clear-button").css('visibility','hidden');
+    //Checks to see if the clear button should be hidden or visible
+    function clearBtn() {
+        if (storedCities.length == 0) {
+            $(".clear-button").css('visibility','hidden');
+        } else {
+            $(".clear-button").css('visibility','visible');
+        }
     }
 
     $(".clearMe").on("click", function () {
         localStorage.clear();
         $(".list-group").empty();
+        storedCities = [];
+
+        //Once the clear button is clicked, this button should be hidden
+        clearBtn();
     });
 
