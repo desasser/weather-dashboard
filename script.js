@@ -14,7 +14,6 @@ clearBtn();
 //populate the search history column
 for (var i = 0; i < storedCities.length; i++) {
     var liEl = $("<li>");
-
     $(liEl).text(storedCities[i])
     $(liEl).addClass("list-group-item btn btn-dark list-font")
     $(".list-group").prepend(liEl);
@@ -47,14 +46,14 @@ $("#button-search").on("click", function () {
 
     //snippet found from stack overflow
     //TODO: reference name stored in response instead
-    //TODO: use return from function
+    //TODO: use return from function, return is returning undefined
     thisSearch = thisSearch.charAt(0).toUpperCase() + thisSearch.slice(1);
 
     if (!storedCities.includes(thisSearch)) {
         //prepends the latest search to the search history as a list item
         var liElToo = $("<li>");
         $(liElToo).text(thisSearch)
-        $(liElToo).addClass("list-group-item")
+        $(liElToo).addClass("list-group-item btn btn-dark list-font")
         $(".list-group").prepend(liElToo);
 
         storedCities.push(thisSearch);
@@ -130,15 +129,18 @@ function currentWeather(city) {
             $("#p-wind-speed").text(`Wind Speed: ${windSpd} mph`);
 
             //Set up style for UV index and change the background color of the container based on value
-            //TODO: change this from a button
-            $("#p-UV").html(`UV Index: <button id="uvWrapper">${uvInd}</button>`);
+            $("#p-UV").html(`UV Index: <span id="uvWrapper">${uvInd}</span>`);
+
             if (uvInd > 6) {
                 $("#uvWrapper").css("background-color", "FF4848")
-            } else if (3 < uvInd >= 6) {
+            } else if (3 < uvInd && uvInd <= 6) {
                 $("#uvWrapper").css("background-color", "#FFFF66")
             } else {
                 $("#uvWrapper").css("background-color", "#ADFF2F")
             }
+
+            //display header for the future forecast cards
+            $("h4").text('5-Day Forecast: ');
 
             //generate future weather cards
             for (i = 0; i < 5; i++) {
@@ -198,7 +200,6 @@ function futureWeather(day, responseToo) {
 
 //create clear button to wipe out search history
 var buttonEl = $("<button>");
-//TODO: cant get this stupid button to shift right
 $(buttonEl).addClass("btn btn-info d-flex align-items-end clearMe");
 $(buttonEl).text("Clear");
 $(".clear-button").append(buttonEl);
@@ -220,4 +221,3 @@ $(".clearMe").on("click", function () {
     //Once the clear button is clicked, this button should be hidden
     clearBtn();
 });
-
