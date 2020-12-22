@@ -14,11 +14,9 @@ clearBtn();
 //populate the search history column
 for (var i = 0; i < storedCities.length; i++) {
     var liEl = $("<li>");
-    var buttonEl = $("<button>");
 
-    $(buttonEl).text(storedCities[i])
-    $(liEl).addClass("list-group-item")
-    $(liEl).append(buttonEl);
+    $(liEl).text(storedCities[i])
+    $(liEl).addClass("list-group-item btn btn-dark list-font")
     $(".list-group").prepend(liEl);
 }
 
@@ -130,11 +128,9 @@ function currentWeather(city) {
             $("#p-temp").text(`Temperature: ${temp} \u00b0F`);
             $("#p-humid").text(`Humidity: ${humidity}% humidity`);
             $("#p-wind-speed").text(`Wind Speed: ${windSpd} mph`);
-            //TODO: convert wind direction into North, South, East, West
 
             //Set up style for UV index and change the background color of the container based on value
             //TODO: change this from a button
-            //TODO: call is maybe not accurate?
             $("#p-UV").html(`UV Index: <button id="uvWrapper">${uvInd}</button>`);
             if (uvInd > 6) {
                 $("#uvWrapper").css("background-color", "FF4848")
