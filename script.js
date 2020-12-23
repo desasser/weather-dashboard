@@ -106,7 +106,7 @@ function currentWeather(city) {
             iconImage.attr('src', iconURL)
             console.log(responseToo);
 
-            $("#city-name").text(city + ' -- ' + now)
+            $("#city-name").text(currentCity + ' -- ' + now)
             $("#city-name").append(iconImage);
             $("#p-temp").text(`Temperature: ${temp} \u00b0F`);
             $("#p-humid").text(`Humidity: ${humidity}% humidity`);
