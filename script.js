@@ -124,7 +124,7 @@ function currentWeather(city) {
             }
 
             //display header for the future forecast cards
-            $("h4").text('5-Day Forecast: ');
+            $("h5").text('5-Day Forecast: ');
 
             //generate future weather cards
             for (i = 0; i < 5; i++) {
