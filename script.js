@@ -148,7 +148,7 @@ function futureWeather(day, responseToo) {
     futureIconImage.attr('src', futureIconURL)
 
     //declare var for tomorrow's date
-    var tomorrow = moment().add(day, 'days').format('MM/DD/YY');
+    var tomorrow = moment().add(day+1, 'days').format('MM/DD/YY');
 
     //declare var for adding the cards for future weather info
     var futureDiv = $("<div>");
