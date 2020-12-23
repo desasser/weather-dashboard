@@ -19,6 +19,12 @@ for (var i = 0; i < storedCities.length; i++) {
     $(".list-group").prepend(liEl);
 }
 
+
+//TODO: Display the last city searched and its current weather on load
+//TODO: Limit the previous history to 10 cities
+//TODO: Bug Fix -- Clear button doesn't load on first search, but does on second search
+//TODO: Edge cases, such as searching gibberish or multiple cities with the same name
+//TODO: Specific advanced searches (city, state, country)
 //TODO: Bonus Stuff - to complete eventually
 //Set keypress - key 13 (enter) to do the same thing as click
 //Button to toggle between metric and imperial
@@ -45,8 +51,6 @@ $("#button-search").on("click", function () {
 
     //call function below here and accept the response.name return from the function
     currentWeather(thisSearch);
-
-    console.log(currentCity);
 });
 
 
@@ -72,7 +76,6 @@ function currentWeather(city) {
         method: "GET"
     }).then(function (response) {
         currentCity = response.name;
-        console.log(currentCity);
         var lat = response.coord.lat;
         var long = response.coord.lon;
 
@@ -97,14 +100,13 @@ function currentWeather(city) {
         }).then(function (responseToo) {
             //declare variables for current data
             var icon = responseToo.current.weather[0].icon;
-            var iconURL = `http://openweathermap.org/img/wn/${icon}@2x.png`
+            var iconURL = `https://openweathermap.org/img/wn/${icon}@2x.png`
             var temp = responseToo.current.temp;
             var humidity = responseToo.current.humidity;
             var windSpd = responseToo.current.wind_speed;
             var uvInd = responseToo.daily[0].uvi;
             var iconImage = $("<img>");
             iconImage.attr('src', iconURL)
-            console.log(responseToo);
 
             $("#city-name").text(currentCity + ' -- ' + now)
             $("#city-name").append(iconImage);
@@ -138,7 +140,7 @@ function currentWeather(city) {
 function futureWeather(day, responseToo) {
     //declare vars for future data
     var futureIcon = responseToo.daily[day].weather[0].icon;
-    var futureIconURL = `http://openweathermap.org/img/wn/${futureIcon}@2x.png`;
+    var futureIconURL = `https://openweathermap.org/img/wn/${futureIcon}@2x.png`;
     var futureTempMax = responseToo.daily[day].temp.max;
     var futureTempMin = responseToo.daily[day].temp.min;
     var futureHumidity = responseToo.daily[day].humidity;
