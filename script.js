@@ -1,12 +1,12 @@
 //declare variables for button click/submit event
 var thisSearch = '';
 var liEl = $("<li>");
-var currentTime = moment().format('HH');
+var currentTime = moment().hour();
 var now = moment().format('dddd, MM/DD/YY');
 
 var storedCities = JSON.parse(localStorage.getItem("saved-cities")) || [];
 
-var currentCity = '';
+var currentCity;
 
 //do not show the clear button on page load if there is no previous search history
 clearBtn();
@@ -19,19 +19,13 @@ for (var i = 0; i < storedCities.length; i++) {
     $(".list-group").prepend(liEl);
 }
 
-//TODO: Bonus Stuff
+//TODO: Bonus Stuff - to complete eventually
 //Set keypress - key 13 (enter) to do the same thing as click
-//How to set dark/light mode?
-//I'd like to have the card background dark with white text at night
-//and light with dark text during the day (based on if statement)
 //Button to toggle between metric and imperial
 //Toggle functionality to hide and expand search history
-//Air Pollution with color scale
-//Add a doppler from the area you are searching
+//Air Pollution with color scale - seperate API
+//Add a doppler from the area you are searching - separate API
 $("#button-search").on("click", function () {
-    //prevent refresh on submit
-    // event.preventDefault();
-
     //if input is blank, return without doing anything
     if ($("#input-flavor").val() === '') {
         return;
@@ -42,23 +36,6 @@ $("#button-search").on("click", function () {
     //save input text and convert to first letter capitalized
     //city
     thisSearch = $("#input-flavor").val();
-    thisSearch = thisSearch.toLowerCase();
-
-    //snippet found from stack overflow
-    //TODO: reference name stored in response instead
-    //TODO: use return from function, return is returning undefined
-    thisSearch = thisSearch.charAt(0).toUpperCase() + thisSearch.slice(1);
-
-    if (!storedCities.includes(thisSearch)) {
-        //prepends the latest search to the search history as a list item
-        var liElToo = $("<li>");
-        $(liElToo).text(thisSearch)
-        $(liElToo).addClass("list-group-item btn btn-dark list-font")
-        $(".list-group").prepend(liElToo);
-
-        storedCities.push(thisSearch);
-        localStorage.setItem("saved-cities", JSON.stringify(storedCities));
-    }
 
     //check to see if a city was added to the search history, if yes show the button, if no button remains hidden
     clearBtn();
@@ -67,7 +44,7 @@ $("#button-search").on("click", function () {
     $("#input-flavor").val('')
 
     //call function below here and accept the response.name return from the function
-    currentCity = currentWeather(thisSearch);
+    currentWeather(thisSearch);
 
     console.log(currentCity);
 });
@@ -85,11 +62,7 @@ $(".list-group").on("click", "li", function () {
 
 function currentWeather(city) {
     //call weather API to pull up weather info from openweather API
-    //TODO: Add toggle for city search, city and state search, city, state, and country search
     var queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=677d25f5725630dee0d3fb96edd1516f`
-
-    //declare variable cityName to store name data from API response
-    var cityName = '';
 
     //ajax call utilizing current weather API to extract lat/long data
     //save lat/long into var coords
@@ -98,13 +71,24 @@ function currentWeather(city) {
         url: queryURLCityCall,
         method: "GET"
     }).then(function (response) {
-        cityName = response.name;
-        console.log(cityName);
+        currentCity = response.name;
+        console.log(currentCity);
         var lat = response.coord.lat;
         var long = response.coord.lon;
 
         //query url for the one call open weather api
         var queryURLOneCall = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=miutely,hourly,alerts&units=imperial&appid=677d25f5725630dee0d3fb96edd1516f`;
+
+        if (!storedCities.includes(city)) {
+            //prepends the latest search to the search history as a list item
+            var liElToo = $("<li>");
+            $(liElToo).text(response.name)
+            $(liElToo).addClass("list-group-item btn btn-dark list-font")
+            $(".list-group").prepend(liElToo);
+    
+            storedCities.push(response.name);
+            localStorage.setItem("saved-cities", JSON.stringify(storedCities));
+        }
 
         //ajax call taking coords from previous call and feeding them into the onecall functionality of the weather API to extract all necessary data
         $.ajax({
@@ -117,10 +101,10 @@ function currentWeather(city) {
             var temp = responseToo.current.temp;
             var humidity = responseToo.current.humidity;
             var windSpd = responseToo.current.wind_speed;
-            //TODO: var windDir = responseToo.current.wind_deg;
             var uvInd = responseToo.daily[0].uvi;
             var iconImage = $("<img>");
             iconImage.attr('src', iconURL)
+            console.log(responseToo);
 
             $("#city-name").text(city + ' -- ' + now)
             $("#city-name").append(iconImage);
@@ -147,10 +131,8 @@ function currentWeather(city) {
                 futureWeather(i, responseToo);
             };
         })
-        return cityName;
     })
-    
-
+    // return cityName;
 }
 
 function futureWeather(day, responseToo) {
@@ -168,7 +150,12 @@ function futureWeather(day, responseToo) {
 
     //declare var for adding the cards for future weather info
     var futureDiv = $("<div>");
-    futureDiv.addClass('future-flavor col-md-2');
+
+    if (currentTime >= 6 && currentTime <= 18) {
+        futureDiv.addClass('future-flavor-light col-md-2');
+    } else {
+        futureDiv.addClass('future-flavor-dark col-md-2');
+    }
 
     //set the date to the future cards
     var futureDate = $("<h5>");
