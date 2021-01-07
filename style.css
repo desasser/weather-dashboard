@@ -1,7 +1,7 @@
 /* is this a hack? */
 body {
     overflow-x: hidden;
-};
+}
 
 header {
     background-color: #333333;
@@ -10,28 +10,28 @@ header {
     padding: 10px;
     text-align: center;
     margin: 0;
-};
+}
 
 h3 {
     margin-left: 10px;
-};
+}
 
 h5 {
     padding-top: 5px;
-};
+}
 
 .searchHistory {
     background-color: #dbdbdb;
     height: 100vh;
-};
+}
 
 .margin-killer {
     margin: 0;
-};
+}
 
 .future-forecast {
     justify-content: space-around;
-};
+}
 
 .future-flavor-dark {
     background-color: #333333;
@@ -39,7 +39,7 @@ h5 {
     width:100%;
     color: white;
     border-radius: .25em;
-};
+}
 
 .future-flavor-light {
     background-color: #9adaff;
@@ -47,40 +47,40 @@ h5 {
     width:100%;
     color: black;
     border-radius: .25em;
-};
+}
 
 .otherSpace {
     background-color: #f7f7f7;
-};
+}
 
 .icon-flavor {
     color: white;
-};
+}
 
 .clear-button {
     display: flex;
-};
+}
 
 .uv-style {
     border-radius: .25em;
     height: 5%;
     width: 10%;
     display: inline;
-};
+}
 
 .list-font {
     color: black;
-};
+}
 
 #input-flavor {
     margin-left: 10px;
-};
+}
 
 #button-search {
     border: none;
-};
+}
 
 #uvWrapper {
     border-radius: 0.25em;
     padding: 0 18px;
-};
+}
