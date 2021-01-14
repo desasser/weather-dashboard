@@ -1,19 +1,19 @@
-//declare variables for button click/submit event
-var thisSearch = '';
-var liEl = $("<li>");
-var currentTime = moment().hour();
-var now = moment().format('dddd, MM/DD/YY');
+//declare constiables for button click/submit event
+let thisSearch = '';
+const liEl = $("<li>");
+const currentTime = moment().hour();
+const now = moment().format('dddd, MM/DD/YY');
 
-var storedCities = JSON.parse(localStorage.getItem("saved-cities")) || [];
+const storedCities = JSON.parse(localStorage.getItem("saved-cities")) || [];
 
-var currentCity;
+let currentCity;
 
 //do not show the clear button on page load if there is no previous search history
 clearBtn();
 
 //populate the search history column
-for (var i = 0; i < storedCities.length; i++) {
-    var liEl = $("<li>");
+for (let i = 0; i < storedCities.length; i++) {
+    const liEl = $("<li>");
     $(liEl).text(storedCities[i])
     $(liEl).addClass("list-group-item btn btn-dark list-font")
     $(".list-group").prepend(liEl);
@@ -55,7 +55,7 @@ $("#button-search").on("click", function () {
 
 
 $(".list-group").on("click", "li", function () {
-    var whichCity = $(this).text();
+    const whichCity = $(this).text();
 
     //clear future cards
     $(".future-forecast").empty();
@@ -66,25 +66,25 @@ $(".list-group").on("click", "li", function () {
 
 function currentWeather(city) {
     //call weather API to pull up weather info from openweather API
-    var queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=677d25f5725630dee0d3fb96edd1516f`
+    const queryURLCityCall = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=677d25f5725630dee0d3fb96edd1516f`
 
     //ajax call utilizing current weather API to extract lat/long data
-    //save lat/long into var coords
+    //save lat/long into const coords
     //feed coords into One Call to get current/future forecast
     $.ajax({
         url: queryURLCityCall,
         method: "GET"
     }).then(function (response) {
         currentCity = response.name;
-        var lat = response.coord.lat;
-        var long = response.coord.lon;
+        const lat = response.coord.lat;
+        const long = response.coord.lon;
 
         //query url for the one call open weather api
-        var queryURLOneCall = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=miutely,hourly,alerts&units=imperial&appid=677d25f5725630dee0d3fb96edd1516f`;
+        const queryURLOneCall = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${long}&exclude=miutely,hourly,alerts&units=imperial&appid=677d25f5725630dee0d3fb96edd1516f`;
 
         if (!storedCities.includes(city)) {
             //prepends the latest search to the search history as a list item
-            var liElToo = $("<li>");
+            const liElToo = $("<li>");
             $(liElToo).text(response.name)
             $(liElToo).addClass("list-group-item btn btn-dark list-font")
             $(".list-group").prepend(liElToo);
@@ -98,14 +98,14 @@ function currentWeather(city) {
             url: queryURLOneCall,
             method: "GET"
         }).then(function (responseToo) {
-            //declare variables for current data
-            var icon = responseToo.current.weather[0].icon;
-            var iconURL = `https://openweathermap.org/img/wn/${icon}@2x.png`
-            var temp = responseToo.current.temp;
-            var humidity = responseToo.current.humidity;
-            var windSpd = responseToo.current.wind_speed;
-            var uvInd = responseToo.daily[0].uvi;
-            var iconImage = $("<img>");
+            //declare constiables for current data
+            const icon = responseToo.current.weather[0].icon;
+            const iconURL = `https://openweathermap.org/img/wn/${icon}@2x.png`
+            const temp = responseToo.current.temp;
+            const humidity = responseToo.current.humidity;
+            const windSpd = responseToo.current.wind_speed;
+            const uvInd = responseToo.daily[0].uvi;
+            const iconImage = $("<img>");
             iconImage.attr('src', iconURL)
 
             $("#city-name").text(currentCity + ' -- ' + now)
@@ -129,7 +129,7 @@ function currentWeather(city) {
             $("h5").text('5-Day Forecast: ');
 
             //generate future weather cards
-            for (i = 0; i < 5; i++) {
+            for (let i = 0; i < 5; i++) {
                 futureWeather(i, responseToo);
             };
         })
@@ -138,20 +138,20 @@ function currentWeather(city) {
 }
 
 function futureWeather(day, responseToo) {
-    //declare vars for future data
-    var futureIcon = responseToo.daily[day].weather[0].icon;
-    var futureIconURL = `https://openweathermap.org/img/wn/${futureIcon}@2x.png`;
-    var futureTempMax = responseToo.daily[day].temp.max;
-    var futureTempMin = responseToo.daily[day].temp.min;
-    var futureHumidity = responseToo.daily[day].humidity;
-    var futureIconImage = $("<img>");
+    //declare consts for future data
+    const futureIcon = responseToo.daily[day].weather[0].icon;
+    const futureIconURL = `https://openweathermap.org/img/wn/${futureIcon}@2x.png`;
+    const futureTempMax = responseToo.daily[day].temp.max;
+    const futureTempMin = responseToo.daily[day].temp.min;
+    const futureHumidity = responseToo.daily[day].humidity;
+    const futureIconImage = $("<img>");
     futureIconImage.attr('src', futureIconURL)
 
-    //declare var for tomorrow's date
-    var tomorrow = moment().add(day+1, 'days').format('MM/DD/YY');
+    //declare const for tomorrow's date
+    const tomorrow = moment().add(day+1, 'days').format('MM/DD/YY');
 
-    //declare var for adding the cards for future weather info
-    var futureDiv = $("<div>");
+    //declare const for adding the cards for future weather info
+    const futureDiv = $("<div>");
 
     if (currentTime >= 6 && currentTime <= 18) {
         futureDiv.addClass('future-flavor-light col-md-2');
@@ -160,7 +160,7 @@ function futureWeather(day, responseToo) {
     }
 
     //set the date to the future cards
-    var futureDate = $("<h5>");
+    const futureDate = $("<h5>");
     futureDate.text(tomorrow);
 
     //put the date on the card
@@ -170,16 +170,16 @@ function futureWeather(day, responseToo) {
     futureDiv.append(futureIconImage);
 
     //put max and min temp on the card
-    var tempBlockHigh = $("<p>")
+    const tempBlockHigh = $("<p>")
     tempBlockHigh.text(`High: ${futureTempMax}`);
     futureDiv.append(tempBlockHigh);
 
-    var tempBlockLow = $("<p>")
+    const tempBlockLow = $("<p>")
     tempBlockLow.text(`Low: ${futureTempMin}`);
     futureDiv.append(tempBlockLow);
 
     //put humidity on the card
-    var humidityBlock = $("<p>");
+    const humidityBlock = $("<p>");
     humidityBlock.text(`Humidity: ${futureHumidity}%`);
     futureDiv.append(humidityBlock);
 
@@ -188,7 +188,7 @@ function futureWeather(day, responseToo) {
 }
 
 //create clear button to wipe out search history
-var buttonEl = $("<button>");
+const buttonEl = $("<button>");
 $(buttonEl).addClass("btn btn-info d-flex align-items-end clearMe");
 $(buttonEl).text("Clear");
 $(".clear-button").append(buttonEl);
